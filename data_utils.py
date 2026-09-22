@@ -1,4 +1,5 @@
 # data_utils.py
+# this is the shared, cached loader used by the pages scripts
 import pandas as pd
 import streamlit as st
 
@@ -22,9 +23,10 @@ def load_reservoir_data(area_number: int = 1) -> pd.DataFrame:
     df = pd.read_csv("data/reservoirs.csv")
     # Renaming the columns, as in the notebook
     df = df.rename(columns=RENAME_MAP)
-    # Set data format in the date column
+    # Raw CSV interleaves multiple price areas and isn't guaranteed to be sorted by date
+    # Convert the date column to datetime
     df["date"] = pd.to_datetime(df["date"])
-    # Sort by dataes
+    # Sort by dates
     df = df.sort_values("date")
     # Only return the data from the specific area
     df = df[df["area_number"] == area_number]
