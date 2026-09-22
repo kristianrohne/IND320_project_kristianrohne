@@ -3,6 +3,7 @@ import streamlit as st
 
 # Add a header to the app
 st.header("Home page, now other things..")
+
 st.header("A strange and complicated Streamlit app")
 
 # Add a button with a label
