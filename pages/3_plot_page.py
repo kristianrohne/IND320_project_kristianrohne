@@ -8,7 +8,8 @@ selected_area = st.selectbox("Choose area", [1, 2, 3, 4, 5])
 
 # Load dataset with function from data_utils.py
 df = load_reservoir_data(area_number = selected_area)
-# List of numeric columns that makes sense to display
+# List of numeric columns that make sense to display
+# Excluding area_number/iso_year/iso_week because they're identifiers, not measurements,
 value_cols = ["fill_ratio", "capacity_twh", "filling_twh", "fill_ratio_previous_week", "fill_ratio_change"]
 
 # Let user select a column 
@@ -23,17 +24,20 @@ start_month, end_month = st.select_slider(
 )
 
 
-# Filter dataset for interval and the numeric columns
+# Filter dataset for interval
 filtered_df = df[(df["date"].dt.to_period("M").astype(str) >= start_month) &
                   (df["date"].dt.to_period("M").astype(str) <= end_month)]
 
+# For displaying x-axis as time instead of a meaningless row number
 filtered_df = filtered_df.set_index("date")
+# Only choose numeric columns 
+# excluding area_number/iso_year/iso_week because they're identifiers, not measurements,
 filtered_df = filtered_df[value_cols]
 
 
 # Plotting for all columns
 if selected_option == "All columns":
-    # min-max normalzing numeric columns 
+    # min-max normalizing numeric columns 
     normalized_df = (filtered_df - filtered_df.min()) / (filtered_df.max() - filtered_df.min())
 
     # Plotting

@@ -1,15 +1,17 @@
-# Import streamlit
 import streamlit as st
 
-# Add a header to the app
-st.header("Home page, now other things..")
+st.header("Reservoir Dashboard")
 
-st.header("A strange and complicated Streamlit app")
+st.write(
+    "This app explores weekly reservoir statistics for Norway's electricity "
+    "price areas (NO1–NO5), published by NVE (the Norwegian Water Resources "
+    "and Energy Directorate). Use the sidebar to navigate between an overview "
+    "table showing each variable's first-month trend and an interactive plot "
+    "of the full dataset."
+)
 
-# Add a button with a label
-if st.button("Press me!"):
-    st.write("You pressed the button!")
-
-# Add a slider with a range from 0 to 100 in increments of 2, starting at 50
-slider_num = st.slider("Select a value", 0, 100, value=50, step=2)
-st.write("Slider value:", slider_num)
+st.write(
+    "This is part 1 of a semester-long project for IND320 – Data to Decision. "
+    "Data is currently read from a local CSV file; a later part of the "
+    "project will switch this to a MongoDB database instead."
+)

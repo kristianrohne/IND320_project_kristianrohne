@@ -5,7 +5,7 @@ from data_utils import load_reservoir_data
 
 st.header("Reservoir data overview")
 st.write(
-    "Each row below represents one variable from the reservoir dataset for area 1, "
+    "Each row below represents one variable from the reservoir dataset for selected area, "
     "showing its trend over the first month of weekly observations (its own "
     "min–max scale per row)."
 )
@@ -22,7 +22,7 @@ numeric_cols = df.select_dtypes(include="number").columns
 rows = []
 for col in numeric_cols:
     # Select only first 4 weeks
-    first_month_values = df[col].iloc[:4].tolist()  # first 4 weeks is approximately first month
+    first_month_values = df[col].iloc[:4].tolist()
     rows.append({"column": col, "trend": first_month_values})
 
 # Use only first month from dataset
