@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from data_utils import load_reservoir_data
+from data_utils import load_reservoir_data, choose_area_type
 
 
 st.header("Reservoir data overview")
@@ -10,29 +10,38 @@ st.write(
     "min–max scale per row)."
 )
 
-# Display only one area at a time, that is more clean
-selected_area = st.selectbox("Choose area", [1, 2, 3, 4, 5])
+# Choose area type; all area numbers of that type are shown side by side
+area_type = choose_area_type()
 # Load data with function from data_utils.py
-df = load_reservoir_data(area_number = selected_area)
+df = load_reservoir_data(area_type=area_type)
 
-# Excluded non-numeric columns (area_type, date fields) since LineChartColumn needs numeric lists
-numeric_cols = df.select_dtypes(include="number").columns
+# Keep only the first calendar month in the data (not just the first 4 rows)
+first_month = df["date"].dt.to_period("M").min()
+first_month_df = df[df["date"].dt.to_period("M") == first_month]
+st.write(f"First month in the data: **{first_month}**")
 
-# For storing data from first month
+# Measurement columns only (area_number, iso_year and iso_week are identifiers)
+value_cols = ["fill_ratio", "capacity_twh", "filling_twh", "fill_ratio_previous_week", "fill_ratio_change"]
+area_numbers = sorted(df["area_number"].unique())
+
+# One row per variable, one list of first-month values per area number
 rows = []
-for col in numeric_cols:
-    # Select only first 4 weeks
-    first_month_values = df[col].iloc[:4].tolist()
-    rows.append({"column": col, "trend": first_month_values})
+for col in value_cols:
+    row = {"column": col}
+    for nr in area_numbers:
+        area_values = first_month_df[first_month_df["area_number"] == nr][col]
+        row[f"{area_type} {nr}"] = area_values.tolist()
+    rows.append(row)
 
 # Use only first month from dataset
 summary_df = pd.DataFrame(rows)
 
-# Display dataset
+# Display dataset: one mini line chart per area number
 st.dataframe(
     summary_df,
     column_config={
-        "trend": st.column_config.LineChartColumn("First month trend"),
+        f"{area_type} {nr}": st.column_config.LineChartColumn(f"{area_type} {nr}")
+        for nr in area_numbers
     },
     hide_index=True,
 )
