@@ -3,6 +3,7 @@
 import pandas as pd
 import streamlit as st
 import requests
+import pymongo
 
 # NVE's Magasinstatistikk API: returns all weekly reservoir data as JSON
 NVE_URL = "https://biapi.nve.no/magasinstatistikk/api/Magasinstatistikk/HentOffentligData"
@@ -58,3 +59,16 @@ def choose_area_type():
     st.caption("**Area type:** EL = electricity price areas (NO1–NO5), "
                "VASS = water-course areas, NO = all of Norway.")
     return st.radio("Choose area type", list(AREAS.keys()), horizontal=True)
+
+@st.cache_resource  # one shared connection, created only once
+def get_mongo_client():
+    # The connection string is read from .streamlit/secrets.toml (locally) or the Secrets settings on streamlit.io
+    return pymongo.MongoClient(st.secrets["mongo"]["uri"])
+
+
+@st.cache_data(ttl=600)  # reuse the data for 10 minutes before asking MongoDB again
+def load_flow_data() -> pd.DataFrame:
+    collection = get_mongo_client()["ind320"]["crossborder_flows"]
+    # find({}) = all documents, {"_id": 0} = leave out MongoDB's internal id
+    documents = list(collection.find({}, {"_id": 0}))
+    return pd.DataFrame(documents)
