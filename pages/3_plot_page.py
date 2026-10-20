@@ -3,13 +3,10 @@ from data_utils import load_reservoir_data, choose_area_type
 import matplotlib.pyplot as plt
 
 st.header("Plot")
-# Make user select the area that they want displayed
-
 # Choose area type; all area numbers of that type are plotted as separate lines
 area_type = choose_area_type()
 
 df = load_reservoir_data(area_type=area_type)
-# Keep only the chosen area number
 
 # List of numeric columns that make sense to display
 # Excluding area_number/iso_year/iso_week because they're identifiers, not measurements,
@@ -25,6 +22,8 @@ month_labels = df["date"].dt.to_period("M").astype(str).unique().tolist()
 start_month, end_month = st.select_slider(
         "Select month range", options=month_labels, value=(month_labels[0], month_labels[11])
 )
+# The NVE API has no date parameters, so all data is downloaded once (cached) and the slider selects the interval
+st.caption("The NVE API always returns all data, so the slider selects which interval of the downloaded data is shown.")
 
 
 # Filter dataset for interval

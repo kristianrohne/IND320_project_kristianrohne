@@ -40,21 +40,21 @@ with right:
         st.info("Select at least one month.")
     else:
         # Same connection and year as on the left, but only the selected months
-                line_df = pie_df[pie_df["date"].dt.month.isin(months)]
+        line_df = pie_df[pie_df["date"].dt.month.isin(months)]
 
-                # Some months have no data (e.g. 2024 starts in October), so check before plotting
-                if line_df.empty:
-                    st.info("No data for the selected months in this year.")
-                else:
-                    wide_df = line_df.pivot(index="date", columns="direction", values="flow_mwh")
+        # Some months have no data (e.g. 2024 starts in October), so check before plotting
+        if line_df.empty:
+            st.info("No data for the selected months in this year.")
+        else:
+            wide_df = line_df.pivot(index="date", columns="direction", values="flow_mwh")
 
-                    fig, ax = plt.subplots()
-                    wide_df.plot(ax=ax)
-                    ax.set_title(f"{connection}, {year}: daily flow")
-                    ax.set_xlabel("Date")
-                    ax.set_ylabel("Flow (MWh)")
-                    st.pyplot(fig)
-                    plt.close(fig)
+            fig, ax = plt.subplots()
+            wide_df.plot(ax=ax)
+            ax.set_title(f"{connection}, {year}: daily flow")
+            ax.set_xlabel("Date")
+            ax.set_ylabel("Flow (MWh)")
+            st.pyplot(fig)
+            plt.close(fig)
 
 # Short documentation of where the data comes from
 with st.expander("About the data"):

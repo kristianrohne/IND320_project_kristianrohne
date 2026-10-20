@@ -5,9 +5,8 @@ from data_utils import load_reservoir_data, choose_area_type
 
 st.header("Reservoir data overview")
 st.write(
-    "Each row below represents one variable from the reservoir dataset for selected area, "
-    "showing its trend over the first month of weekly observations (its own "
-    "min–max scale per row)."
+    "Each row is one variable. Each column shows its trend during the first calendar month "
+    "of the data for one area of the chosen type."
 )
 
 # Choose area type; all area numbers of that type are shown side by side

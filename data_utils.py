@@ -24,8 +24,6 @@ RENAME_MAP = {
 
 @st.cache_data
 def load_reservoir_data(area_type: str = "EL") -> pd.DataFrame:
-    
-    
     # Fetch the data from the API (no parameters, always returns all data)
     response = requests.get(NVE_URL, timeout=60)
     response.raise_for_status()  # stop with an error if the request failed
@@ -40,7 +38,6 @@ def load_reservoir_data(area_type: str = "EL") -> pd.DataFrame:
     # Sort by dates
     df = df.sort_values("date")
 
-    # Only return the data from the specific area type AND area number
     # Only return the data for the chosen area type (all area numbers of that type)
     df = df[df["area_type"] == area_type]
     return df
